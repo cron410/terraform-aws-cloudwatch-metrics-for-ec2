@@ -17,5 +17,6 @@ aws cloudwatch list-metrics \
     --metric-name disk_used_percent \
     --profile $PROFILE \
     --region $REGION \
-    --dimensions Name=InstanceId,Value=$INSTANCE_ID --query "Metrics[0].Dimensions" \
-    | jq 'from_entries'
+    --dimensions Name=InstanceId,Value=$INSTANCE_ID \
+    | jq -r '.Metrics[] | select(.Dimensions[].Value=="$DISK_PATH")' \
+    | jq -r '.Dimensions' | jq 'from_entries' | jq -c
